@@ -3,14 +3,16 @@ import { MicrophoneProvider } from './audio/MicrophoneProvider';
 import { Card } from './components/ui';
 import { t } from './i18n/de';
 import { HoldNoteScreen } from './screens/HoldNoteScreen';
+import { MelodyScreen } from './screens/MelodyScreen';
 import { TunerScreen } from './screens/TunerScreen';
 
-type Screen = 'home' | 'tuner' | 'hold';
+type Screen = 'home' | 'tuner' | 'hold' | 'melody';
 
 const TITLES: Record<Screen, string> = {
   home: t.appName,
   tuner: t.home.tunerTitle,
   hold: t.home.holdTitle,
+  melody: t.home.melodyTitle,
 };
 
 export default function App() {
@@ -37,6 +39,7 @@ export default function App() {
           {screen === 'home' && <Home onOpen={setScreen} />}
           {screen === 'tuner' && <TunerScreen />}
           {screen === 'hold' && <HoldNoteScreen />}
+          {screen === 'melody' && <MelodyScreen />}
         </main>
       </div>
     </MicrophoneProvider>
@@ -47,6 +50,7 @@ function Home({ onOpen }: { onOpen(screen: Screen): void }) {
   const entries: { screen: Screen; icon: string; title: string; text: string }[] = [
     { screen: 'tuner', icon: '🎚️', title: t.home.tunerTitle, text: t.home.tunerText },
     { screen: 'hold', icon: '🎯', title: t.home.holdTitle, text: t.home.holdText },
+    { screen: 'melody', icon: '🎶', title: t.home.melodyTitle, text: t.home.melodyText },
   ];
 
   return (

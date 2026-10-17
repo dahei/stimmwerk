@@ -1,9 +1,8 @@
 import { useRef } from 'react';
-import { noteName } from '../audio/notes';
 import type { PitchReading } from '../audio/tracker';
 import { classifyCents } from '../exercises/scoring';
-import { settings } from '../settings';
 import { STATUS_COLOR_VAR } from './colors';
+import { drawNoteGrid, NOTE_LABEL_WIDTH } from './noteGrid';
 import { cssColor, useCanvas } from './useCanvas';
 
 interface PitchLadderProps {
@@ -20,12 +19,9 @@ interface PitchLadderProps {
   heightClass?: string;
 }
 
-const LABEL_WIDTH = 44;
 /** Without a target, the view moves only when the voice leaves this band (in semitones). */
 const RECENTER_SEMITONES = 3;
 const MAX_GAP_MS = 120;
-// Pitch classes of the black piano keys; their lines and labels are lighter.
-const BLACK_KEYS = new Set([1, 3, 6, 8, 10]);
 
 /**
  * Vertical note scale with the voice as a trail that scrolls to the left.
@@ -66,28 +62,17 @@ export function PitchLadder({
 
     const rowHeight = height / (2 * span + 1);
     const toY = (midi: number) => height / 2 - (midi - mid) * rowHeight;
-    const plotLeft = LABEL_WIDTH;
+    const plotLeft = NOTE_LABEL_WIDTH;
     const plotRight = width - 14;
     const toX = (time: number) => plotRight - ((now - time) / historyMs) * (plotRight - plotLeft);
 
-    // Note lines and names
-    ctx.font = '600 12px system-ui, sans-serif';
-    ctx.textBaseline = 'middle';
-    ctx.textAlign = 'right';
-    for (let midi = Math.ceil(mid - span); midi <= Math.floor(mid + span); midi++) {
-      const black = BLACK_KEYS.has(((midi % 12) + 12) % 12);
-      const isTarget = midi === targetMidi;
-      ctx.strokeStyle = cssColor(isTarget ? '--accent' : '--track');
-      ctx.lineWidth = isTarget ? 2 : black ? 0.5 : 1;
-      ctx.beginPath();
-      ctx.moveTo(plotLeft, toY(midi));
-      ctx.lineTo(width, toY(midi));
-      ctx.stroke();
-      ctx.fillStyle = cssColor(isTarget ? '--accent' : '--muted');
-      ctx.globalAlpha = black && !isTarget ? 0.55 : 1;
-      ctx.fillText(noteName(midi, settings.noteNaming), LABEL_WIDTH - 8, toY(midi));
-      ctx.globalAlpha = 1;
-    }
+    drawNoteGrid(ctx, {
+      minMidi: mid - span,
+      maxMidi: mid + span,
+      toY,
+      width,
+      highlight: targetMidi === undefined ? undefined : new Set([targetMidi]),
+    });
 
     // Target band
     if (targetMidi !== undefined) {

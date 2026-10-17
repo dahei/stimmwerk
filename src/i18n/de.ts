@@ -3,6 +3,8 @@
 const formatCents = (cents: number) =>
   `${cents > 0 ? '+' : cents < 0 ? '−' : '±'}${Math.abs(Math.round(cents))} Cent`;
 
+const TEMPO_NAMES: Record<number, string> = { 60: 'langsam', 80: 'mittel', 100: 'schnell' };
+
 export const de = {
   appName: 'Stimmwerk',
   back: 'Zurück',
@@ -13,6 +15,8 @@ export const de = {
     tunerText: 'Sing frei und sieh, welchen Ton du triffst.',
     holdTitle: 'Ton halten',
     holdText: 'Halte einen Ton so stabil wie möglich.',
+    melodyTitle: 'Melodie nachsingen',
+    melodyText: 'Hör eine kurze Tonfolge und sing sie nach.',
     headphoneHint: 'Tipp: Mit Kopfhörern und in einem ruhigen Raum klappt die Tonerkennung am besten.',
     credits: 'Klavierklang: Salamander Grand Piano von Alexander Holm (CC BY 3.0)',
   },
@@ -50,22 +54,50 @@ export const de = {
     tooQuiet: 'zu leise',
   },
 
-  hold: {
-    targetNote: 'Zielton',
+  note: {
     lower: 'Halbton tiefer',
     higher: 'Halbton höher',
     takeCurrent: 'Gesungenen Ton übernehmen',
+  },
+
+  run: {
+    listenPhase: 'Hör gut zu …',
+    countIn: 'Gleich geht’s los',
+    now: 'Jetzt singen!',
+    cancel: 'Abbrechen',
+  },
+
+  hold: {
+    targetNote: 'Zielton',
     duration: 'Dauer',
     seconds: (s: number) => `${s} s`,
     tolerance: 'Toleranz',
     toleranceValue: (c: number) => `±${c} Cent`,
     listen: 'Ton anhören',
     start: 'Start',
-    listenPhase: 'Hör gut zu …',
-    countIn: 'Gleich geht’s los',
-    now: 'Jetzt singen!',
-    cancel: 'Abbrechen',
     remaining: (s: number) => `noch ${s} s`,
+  },
+
+  melody: {
+    phrase: 'Tonfolge',
+    random: 'Zufall',
+    randomText: 'immer neu',
+    difficulty: (n: number) => ['leicht', 'mittel', 'schwer'][n - 1],
+    root: 'Grundton',
+    tempo: 'Tempo',
+    tempoValue: (bpm: number) => TEMPO_NAMES[bpm] ?? `${bpm} BPM`,
+    listen: 'Anhören',
+    start: 'Start',
+    noteOf: (i: number, n: number) => `Ton ${i} von ${n}`,
+    hits: (hits: number, n: number) => `${hits} von ${n} Tönen getroffen`,
+    newRandom: 'Neue Tonfolge',
+    status: {
+      hit: 'getroffen',
+      low: 'zu tief',
+      high: 'zu hoch',
+      unsteady: 'unsicher',
+      missed: 'nicht gehört',
+    },
   },
 
   result: {

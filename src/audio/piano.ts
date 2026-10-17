@@ -44,7 +44,7 @@ export function fetchPianoSample(midi: number): Promise<ArrayBuffer> {
   return file;
 }
 
-function decodePianoSample(ctx: BaseAudioContext, midi: number): Promise<AudioBuffer> {
+export function decodePianoSample(ctx: BaseAudioContext, midi: number): Promise<AudioBuffer> {
   const sampleMidi = nearestSampleMidi(midi);
   let buffer = decoded.get(sampleMidi);
   if (!buffer) {
@@ -56,28 +56,28 @@ function decodePianoSample(ctx: BaseAudioContext, midi: number): Promise<AudioBu
   return buffer;
 }
 
-const RELEASE_S = 0.25;
+export const PIANO_RELEASE_S = 0.25;
 
-/** Plays one piano note for `durationMs`, then fades it out. Resolves at the end of the fade. */
-export async function playPianoNote(ctx: AudioContext, midi: number, durationMs: number): Promise<void> {
-  const buffer = await decodePianoSample(ctx, midi);
-  const start = ctx.currentTime;
-  const end = start + durationMs / 1000;
-
+/** Schedules one piano note at audio time `when`; it fades out after `durationS`. */
+export function schedulePianoNote(
+  ctx: AudioContext,
+  buffer: AudioBuffer,
+  midi: number,
+  when: number,
+  durationS: number,
+): AudioScheduledSourceNode {
+  const end = when + durationS;
   const source = ctx.createBufferSource();
   source.buffer = buffer;
   source.playbackRate.value = playbackRate(midi, nearestSampleMidi(midi));
 
   const gain = ctx.createGain();
-  gain.gain.setValueAtTime(0.8, start);
+  gain.gain.setValueAtTime(0.8, when);
   gain.gain.setValueAtTime(0.8, end);
-  gain.gain.linearRampToValueAtTime(0, end + RELEASE_S);
+  gain.gain.linearRampToValueAtTime(0, end + PIANO_RELEASE_S);
 
   source.connect(gain).connect(ctx.destination);
-  source.start(start);
-  source.stop(end + RELEASE_S);
-
-  await new Promise<void>((resolve) => {
-    source.onended = () => resolve();
-  });
+  source.start(when);
+  source.stop(end + PIANO_RELEASE_S);
+  return source;
 }

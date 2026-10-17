@@ -1,0 +1,64 @@
+@import 'tailwindcss';
+
+/* Color tokens. Canvases read them with cssColor(), so keep the names in sync. */
+:root {
+  color-scheme: light dark;
+  --bg: #f4f6fa;
+  --surface: #ffffff;
+  --text: #0f172a;
+  --muted: #64748b;
+  --border: #e2e8f0;
+  --track: #e2e8f0;
+  --accent: #6d28d9;
+  --on-accent: #ffffff;
+  /* Feedback: green = hit, blue = too low, orange = too high (safe for red-green color blindness) */
+  --hit: #15803d;
+  --hit-soft: rgb(22 163 74 / 0.18);
+  --low: #2563eb;
+  --high: #ea580c;
+  --high-soft: rgb(234 88 12 / 0.14);
+  --star: #f59e0b;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0b1020;
+    --surface: #141b2e;
+    --text: #e5e9f2;
+    --muted: #94a3b8;
+    --border: #243049;
+    --track: #243049;
+    --accent: #a78bfa;
+    --on-accent: #120a26;
+    --hit: #4ade80;
+    --hit-soft: rgb(74 222 128 / 0.2);
+    --low: #60a5fa;
+    --high: #fb923c;
+    --high-soft: rgb(251 146 60 / 0.16);
+    --star: #fbbf24;
+  }
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-text: var(--text);
+  --color-muted: var(--muted);
+  --color-border: var(--border);
+  --color-track: var(--track);
+  --color-accent: var(--accent);
+  --color-on-accent: var(--on-accent);
+  --color-hit: var(--hit);
+  --color-hit-soft: var(--hit-soft);
+  --color-low: var(--low);
+  --color-high: var(--high);
+  --color-high-soft: var(--high-soft);
+  --color-star: var(--star);
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  -webkit-tap-highlight-color: transparent;
+}

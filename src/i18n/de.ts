@@ -14,6 +14,7 @@ export const de = {
     holdTitle: 'Ton halten',
     holdText: 'Halte einen Ton so stabil wie möglich.',
     headphoneHint: 'Tipp: Mit Kopfhörern und in einem ruhigen Raum klappt die Tonerkennung am besten.',
+    credits: 'Klavierklang: Salamander Grand Piano von Alexander Holm (CC BY 3.0)',
   },
 
   microphone: {

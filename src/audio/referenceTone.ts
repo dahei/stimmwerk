@@ -1,6 +1,5 @@
 import { midiToFrequency } from './notes';
-
-// Temporary synthesized reference tone for M1. M2 replaces it with piano samples.
+import { fetchPianoSample, playPianoNote } from './piano';
 
 let context: AudioContext | null = null;
 
@@ -9,10 +8,24 @@ function getContext(): AudioContext {
   return context;
 }
 
-/** Plays a soft tone and resolves when it has finished. */
+/** Downloads the piano sample in the background, so that the first play starts without delay. */
+export function preloadReferenceTone(midi: number): void {
+  fetchPianoSample(midi).catch(() => {});
+}
+
+/** Plays the target note as a piano tone and resolves when it has finished. */
 export async function playReferenceTone(midi: number, durationMs = 1500): Promise<void> {
   const ctx = getContext();
   await ctx.resume();
+  try {
+    await playPianoNote(ctx, midi, durationMs);
+  } catch {
+    // Samples not available (offline before the first load, decode error): use a simple tone.
+    await playSynthTone(ctx, midi, durationMs);
+  }
+}
+
+async function playSynthTone(ctx: AudioContext, midi: number, durationMs: number): Promise<void> {
   const start = ctx.currentTime;
   const end = start + durationMs / 1000;
 

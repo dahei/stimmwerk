@@ -66,6 +66,7 @@ function Home({ onOpen }: { onOpen(screen: Screen): void }) {
         </button>
       ))}
       <p className="pt-2 text-sm text-muted">{t.home.headphoneHint}</p>
+      <p className="pt-6 text-xs text-muted">{t.home.credits}</p>
     </div>
   );
 }

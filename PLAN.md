@@ -21,7 +21,7 @@ This document records the decisions. Use it as the reference for all milestones.
 | Audio input | Web Audio API, `getUserMedia` without echo cancellation, noise suppression and auto gain |
 | Pitch detection | `pitchy` (McLeod pitch method) |
 | Graphics | `<canvas>` for the tuner and the piano roll |
-| Reference sound | Piano samples (milestone 2). Milestone 1 uses a simple synthesized tone. |
+| Reference sound | Salamander Grand Piano samples (CC BY 3.0), C2 to C6, one sample every minor third. A synthesized tone is the fallback. |
 | PWA | `vite-plugin-pwa`. Precache the app and the piano samples. |
 | Tests | Vitest for all pure logic. Test the pitch detection with synthetic signals. |
 | Hosting | Public GitHub repository `dahei/stimmwerk`, deployment to GitHub Pages with GitHub Actions |

@@ -13,3 +13,7 @@ npm test         # Vitest
 npm run lint     # oxlint
 npm run build    # type check and production build
 ```
+
+## Credits
+
+Piano samples: [Salamander Grand Piano V3](https://archive.org/details/SalamanderGrandPianoV3) by Alexander Holm, licensed under [CC BY 3.0](https://creativecommons.org/licenses/by/3.0/). See `public/samples/piano/LICENSE.txt`.

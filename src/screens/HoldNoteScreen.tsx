@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useMicrophone } from '../audio/microphoneContext';
 import { centsFrom, noteName } from '../audio/notes';
-import { playReferenceTone } from '../audio/referenceTone';
+import { playReferenceTone, preloadReferenceTone } from '../audio/referenceTone';
 import { MicrophoneGate } from '../components/MicrophoneGate';
 import { LevelMeter } from '../components/LevelMeter';
 import { PitchCurve } from '../components/PitchCurve';
@@ -53,6 +53,8 @@ function HoldNote() {
   const liveCents = reading?.displayMidi != null ? centsFrom(reading.displayMidi, targetMidi) : null;
 
   useEffect(() => () => void runId.current++, []);
+
+  useEffect(() => preloadReferenceTone(targetMidi), [targetMidi]);
 
   async function begin() {
     const run = ++runId.current;

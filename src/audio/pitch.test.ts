@@ -85,4 +85,13 @@ describe('PitchTracker with vibrato', () => {
     expect(reading.displayMidi).toBeNull();
     expect(reading.scoreMidi).toBeNull();
   });
+
+  it('keeps the last pitch during a short dropout, then releases it', () => {
+    const tracker = new PitchTracker();
+    const silent = { frequency: null, clarity: 0.3, volumeDecibels: -70 };
+    tracker.push(0, { frequency: 220, clarity: 0.95, volumeDecibels: -30 });
+    expect(tracker.push(100, silent).displayMidi).toBeCloseTo(57);
+    expect(tracker.push(100, silent).scoreMidi).toBeCloseTo(57);
+    expect(tracker.push(300, silent).displayMidi).toBeNull();
+  });
 });

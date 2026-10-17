@@ -6,8 +6,10 @@ import { TimedMedian } from './smoothing';
 export const DISPLAY_WINDOW_MS = 80;
 /** Scoring: approximately 200 ms, so that natural vibrato is not an error. */
 export const SCORE_WINDOW_MS = 200;
+/** Short dropouts (consonants, breath noise, an unclear frame) keep the last pitch. */
+export const HOLD_MS = 200;
 /** After a silence longer than this, smoothing starts fresh. */
-const GAP_RESET_MS = 150;
+const GAP_RESET_MS = 300;
 
 export interface PitchReading {
   /** Milliseconds, same clock as the input frames. */
@@ -25,21 +27,27 @@ export interface PitchReading {
 export class PitchTracker {
   private display = new TimedMedian(DISPLAY_WINDOW_MS);
   private score = new TimedMedian(SCORE_WINDOW_MS);
-  private lastVoicedTime = -Infinity;
+  private last: { time: number; displayMidi: number; scoreMidi: number } | null = null;
 
   push(time: number, frame: PitchFrame): PitchReading {
     const base = { time, frequency: frame.frequency, clarity: frame.clarity, volumeDecibels: frame.volumeDecibels };
     if (frame.frequency === null) {
+      if (this.last && time - this.last.time <= HOLD_MS) {
+        return { ...base, displayMidi: this.last.displayMidi, scoreMidi: this.last.scoreMidi };
+      }
       return { ...base, displayMidi: null, scoreMidi: null };
     }
-    if (time - this.lastVoicedTime > GAP_RESET_MS) this.reset();
-    this.lastVoicedTime = time;
+    if (this.last && time - this.last.time > GAP_RESET_MS) this.reset();
     const midi = frequencyToMidi(frame.frequency);
-    return { ...base, displayMidi: this.display.push(time, midi), scoreMidi: this.score.push(time, midi) };
+    const displayMidi = this.display.push(time, midi);
+    const scoreMidi = this.score.push(time, midi);
+    this.last = { time, displayMidi, scoreMidi };
+    return { ...base, displayMidi, scoreMidi };
   }
 
   reset(): void {
     this.display.reset();
     this.score.reset();
+    this.last = null;
   }
 }

@@ -10,9 +10,11 @@ export interface DetectorOptions {
   maxFrequency: number;
 }
 
+// Real voices into laptop and phone microphones (auto gain off) are often
+// quieter than -45 dBFS and less clear than 0.9. M3 calibrates these per user.
 export const DEFAULT_DETECTOR_OPTIONS: DetectorOptions = {
-  minClarity: 0.9,
-  minVolumeDecibels: -45,
+  minClarity: 0.8,
+  minVolumeDecibels: -60,
   minFrequency: 60,
   maxFrequency: 1400,
 };

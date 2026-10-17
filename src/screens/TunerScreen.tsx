@@ -1,7 +1,9 @@
 import { useMicrophone } from '../audio/microphoneContext';
 import { nearestNote, noteName } from '../audio/notes';
+import { LevelMeter } from '../components/LevelMeter';
 import { MicrophoneGate } from '../components/MicrophoneGate';
 import { PitchFeedback } from '../components/PitchFeedback';
+import { PitchLadder } from '../components/PitchLadder';
 import { TunerGauge } from '../components/TunerGauge';
 import { Card } from '../components/ui';
 import { t } from '../i18n/de';
@@ -32,8 +34,10 @@ function Tuner() {
           {reading?.frequency ? t.tuner.frequency(reading.frequency) : ''}
         </div>
       </div>
+      <PitchLadder reading={reading} toleranceCents={TUNER_TOLERANCE_CENTS} />
       <TunerGauge cents={nearest?.cents ?? null} toleranceCents={TUNER_TOLERANCE_CENTS} />
       <PitchFeedback cents={nearest?.cents ?? null} toleranceCents={TUNER_TOLERANCE_CENTS} />
+      <LevelMeter reading={reading} />
     </Card>
   );
 }

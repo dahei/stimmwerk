@@ -53,7 +53,10 @@ Default mode is call and response: the app plays the notes, then the user sings.
 
 ## 5. Feedback and display
 
-- "Hold a note" and "Hit a note" use a large tuner display with the deviation in cents.
+- The main live display is a vertical note ladder: note names on the left, the target band, and the voice as a trail of the last 4 seconds. Thus, the user sees how far away the voice is (for example "2 notes too low").
+- The text shows the direction and the distance: in cents below one semitone, in semitones above one semitone.
+- A level meter shows if the microphone hears the user loudly enough. The URL parameter `?debug` shows the raw values (dB, clarity, Hz).
+- The free tuner also has a fine horizontal display with the deviation in cents.
 - Melodies use a scrolling piano roll: target notes are bars, the voice of the user is a live line.
 - Colors: green = hit, blue = too low, orange = too high. Arrows ↑ and ↓ also show the direction (for users with color blindness).
 - Note names are German (C D E F G A H) with the scientific octave number (C4, A4, H3). A setting changes them to English.

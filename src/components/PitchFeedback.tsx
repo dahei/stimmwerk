@@ -12,7 +12,7 @@ interface PitchFeedbackProps {
   toleranceCents: number;
 }
 
-/** Direction hint in text and arrow form, so that it does not depend on color only. */
+/** Direction and distance in text and arrow form, so that it does not depend on color only. */
 export function PitchFeedback({ cents, toleranceCents }: PitchFeedbackProps) {
   if (cents === null) {
     return <p className="text-center text-lg text-muted">{t.feedback.silent}</p>;
@@ -21,7 +21,7 @@ export function PitchFeedback({ cents, toleranceCents }: PitchFeedbackProps) {
   return (
     <p className={`text-center text-lg font-semibold ${status.className}`} aria-live="polite">
       <span aria-hidden="true">{status.icon}</span> {status.text}
-      <span className="ml-2 font-normal text-muted tabular-nums">{t.feedback.cents(cents)}</span>
+      <span className="ml-2 font-normal text-muted tabular-nums">· {t.feedback.distance(cents)}</span>
     </p>
   );
 }

@@ -1,5 +1,8 @@
 // All user-facing texts. Keep them here so that a translation is easy later.
 
+const formatCents = (cents: number) =>
+  `${cents > 0 ? '+' : cents < 0 ? '−' : '±'}${Math.abs(Math.round(cents))} Cent`;
+
 export const de = {
   appName: 'Stimmwerk',
   back: 'Zurück',
@@ -32,7 +35,18 @@ export const de = {
     hit: 'Getroffen',
     low: 'Höher singen',
     high: 'Tiefer singen',
-    cents: (cents: number) => `${cents > 0 ? '+' : cents < 0 ? '−' : '±'}${Math.abs(Math.round(cents))} Cent`,
+    cents: formatCents,
+    /** Below one semitone in cents, above that in semitones: "−30 Cent", "2,3 Halbtöne". */
+    distance: (cents: number) => {
+      if (Math.abs(cents) < 100) return formatCents(cents);
+      const semitones = Math.round(Math.abs(cents) / 10) / 10;
+      return `${semitones.toFixed(1).replace('.', ',')} ${semitones === 1 ? 'Halbton' : 'Halbtöne'}`;
+    },
+  },
+
+  level: {
+    label: 'Pegel',
+    tooQuiet: 'zu leise',
   },
 
   hold: {

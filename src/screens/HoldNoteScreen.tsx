@@ -3,9 +3,10 @@ import { useMicrophone } from '../audio/microphoneContext';
 import { centsFrom, noteName } from '../audio/notes';
 import { playReferenceTone } from '../audio/referenceTone';
 import { MicrophoneGate } from '../components/MicrophoneGate';
+import { LevelMeter } from '../components/LevelMeter';
 import { PitchCurve } from '../components/PitchCurve';
 import { PitchFeedback } from '../components/PitchFeedback';
-import { TunerGauge } from '../components/TunerGauge';
+import { PitchLadder } from '../components/PitchLadder';
 import { Button, Card, OptionGroup } from '../components/ui';
 import { evaluateHoldNote, type HoldNoteResult, type HoldNoteSettings, type PitchSample } from '../exercises/holdNote';
 import { t } from '../i18n/de';
@@ -47,7 +48,6 @@ function HoldNote() {
   // Each run gets an id; a cancel or unmount makes older runs stop.
   const runId = useRef(0);
   const scoreSamples = useRef<PitchSample[]>([]);
-  const [liveCurve, setLiveCurve] = useState<PitchSample[]>([]);
 
   const exercise: HoldNoteSettings = { targetMidi, durationMs: durationS * 1000, toleranceCents };
   const liveCents = reading?.displayMidi != null ? centsFrom(reading.displayMidi, targetMidi) : null;
@@ -65,7 +65,6 @@ function HoldNote() {
     }
     if (runId.current !== run) return;
     scoreSamples.current = [];
-    setLiveCurve([]);
     setPhase({ kind: 'singing', startTime: performance.now(), exercise });
   }
 
@@ -93,7 +92,6 @@ function HoldNote() {
       }
       scoreSamples.current.push({ time, midi: r.scoreMidi });
       displayCurve.push({ time, midi: r.displayMidi });
-      setLiveCurve([...displayCurve]);
     });
     return unsubscribe;
   }, [phase, subscribe]);
@@ -136,14 +134,14 @@ function HoldNote() {
             </span>
           )}
         </div>
-        <TunerGauge cents={phase.kind === 'singing' ? liveCents : null} toleranceCents={toleranceCents} />
-        <PitchFeedback cents={phase.kind === 'singing' ? liveCents : null} toleranceCents={toleranceCents} />
-        <PitchCurve
-          samples={phase.kind === 'singing' ? liveCurve : []}
+        <PitchLadder
+          reading={phase.kind === 'singing' ? reading : null}
           targetMidi={targetMidi}
           toleranceCents={toleranceCents}
-          durationMs={exercise.durationMs}
+          resetKey={phase.kind === 'singing' ? phase.startTime : phase.kind}
         />
+        <PitchFeedback cents={phase.kind === 'singing' ? liveCents : null} toleranceCents={toleranceCents} />
+        <LevelMeter reading={reading} />
         <Button variant="secondary" className="w-full" onClick={cancel}>
           {t.hold.cancel}
         </Button>
@@ -186,8 +184,9 @@ function HoldNote() {
           {t.hold.takeCurrent}
           {canTake && ` (${noteName(singingMidi, settings.noteNaming)})`}
         </Button>
-        <TunerGauge cents={liveCents} toleranceCents={toleranceCents} />
+        <PitchLadder reading={reading} targetMidi={targetMidi} toleranceCents={toleranceCents} span={3} heightClass="h-48" />
         <PitchFeedback cents={liveCents} toleranceCents={toleranceCents} />
+        <LevelMeter reading={reading} />
       </Card>
 
       <Card className="space-y-4">
